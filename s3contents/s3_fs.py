@@ -31,6 +31,7 @@ class S3FS(GenericFS):
             config=True, env="JPYNB_S3_BUCKET")
     signature_version = Unicode(help="").tag(config=True)
     sse = Unicode(help="Type of server-side encryption to use").tag(config=True)
+    sse_kms_key_id = Unicode(help="Exact KMS key to be used").tag(config=True)
 
     prefix = Unicode("", help="Prefix path inside the specified bucket").tag(config=True)
     delimiter = Unicode("/", help="Path delimiter").tag(config=True)
