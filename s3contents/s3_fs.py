@@ -58,6 +58,7 @@ class S3FS(GenericFS):
         s3_additional_kwargs = {}
         if self.sse:
             s3_additional_kwargs["ServerSideEncryption"] = self.sse
+            s3_additional_kwargs["SSEKMSKeyId"] = self.sse_kms_key_id
 
         self.fs = s3fs.S3FileSystem(key=self.access_key_id,
                                     secret=self.secret_access_key,
