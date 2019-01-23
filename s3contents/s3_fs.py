@@ -192,7 +192,7 @@ class S3FS(GenericFS):
     def writenotebook(self, path, content):
         path_ = self.path(self.unprefix(path))
         self.log.debug("S3contents.S3FS: Writing notebook: `%s`", path_)
-        with self.fs.open(path_, mode='wb') as f:
+        with self.fs.open(path_, mode='wb', acl = 'private') as f:
             f.write(content.encode("utf-8"))
 
     #  Utilities -------------------------------------------------------------------------------------------------------
