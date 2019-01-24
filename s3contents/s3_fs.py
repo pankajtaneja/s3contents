@@ -151,13 +151,13 @@ class S3FS(GenericFS):
     def mkdir(self, path):
         path_ = self.path(path, self.dir_keep_file)
         self.log.debug("S3contents.S3FS: Making dir: `%s`", path_)
-        self.fs.touch(path_)
+        self.fs.touch(path_,acl='private')
 
     def read(self, path):
         path_ = self.path(path)
         if not self.isfile(path):
             raise NoSuchFile(path_)
-        with self.fs.open(path_, mode='rb') as f:
+        with self.fs.open(path_, mode='rb', acl='private') as f:
             content = f.read().decode("utf-8")
         return content
 
@@ -186,8 +186,8 @@ class S3FS(GenericFS):
             raise HTTPError(
                 400, u'Encoding error saving %s: %s' % (path_, e)
             )
-        with self.fs.open(path_, mode='wb') as f:
-            f.write(content_)
+        with self.fs.open(path_, mode='wb', acl='private') as f:
+            f.write(content_,acl='private')
 
     def writenotebook(self, path, content):
         path_ = self.path(self.unprefix(path))
