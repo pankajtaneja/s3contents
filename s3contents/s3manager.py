@@ -54,6 +54,7 @@ class S3ContentsManager(GenericContentsManager):
             sse_kms_key_id=self.sse_kms_key_id)
 
     def _save_notebook(self, model, path):
+        print("Debug for auto reload")
         nb_contents = from_dict(model['content'])
         self.check_and_sign(nb_contents, path)
         file_contents = json.dumps(model["content"])
