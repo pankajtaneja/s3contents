@@ -53,6 +53,7 @@ class S3ContentsManager(GenericContentsManager):
             delimiter=self.delimiter,
             sse=self.sse,
             sse_kms_key_id=self.sse_kms_key_id)
+        self.log.debug("S3contents.S3manager: init")
 
     def _save_notebook(self, model, path):
         self.log.debug("S3contents.S3FS Auto Reload:")
