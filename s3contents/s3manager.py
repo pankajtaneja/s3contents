@@ -39,6 +39,7 @@ class S3ContentsManager(GenericContentsManager):
     def __init__(self, *args, **kwargs):
         super(S3ContentsManager, self).__init__(*args, **kwargs)
 
+        self.log = log
         self._fs = S3FS(
             log=self.log,
             access_key_id=self.access_key_id,
