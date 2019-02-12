@@ -11,6 +11,7 @@ from s3contents.genericfs import GenericFS, NoSuchFile
 
 from tornado.web import HTTPError
 
+
 class S3FS(GenericFS):
 
     access_key_id = Unicode(
@@ -30,10 +31,12 @@ class S3FS(GenericFS):
         "notebooks", help="Bucket name to store notebooks").tag(
             config=True, env="JPYNB_S3_BUCKET")
     signature_version = Unicode(help="").tag(config=True)
-    sse = Unicode(help="Type of server-side encryption to use").tag(config=True)
+    sse = Unicode(
+        help="Type of server-side encryption to use").tag(config=True)
     sse_kms_key_id = Unicode(help="Exact KMS key to be used").tag(config=True)
 
-    prefix = Unicode("", help="Prefix path inside the specified bucket").tag(config=True)
+    prefix = Unicode(
+        "", help="Prefix path inside the specified bucket").tag(config=True)
     delimiter = Unicode("/", help="Path delimiter").tag(config=True)
 
     dir_keep_file = Unicode(
@@ -60,6 +63,8 @@ class S3FS(GenericFS):
         if self.sse:
             s3_additional_kwargs["ServerSideEncryption"] = self.sse
             s3_additional_kwargs["SSEKMSKeyId"] = self.sse_kms_key_id
+
+        self.log.debug("S3contents.S3FS: creating file system object")
 
         self.fs = s3fs.S3FileSystem(key=self.access_key_id,
                                     secret=self.secret_access_key,
@@ -116,23 +121,27 @@ class S3FS(GenericFS):
             except FileNotFoundError:
                 is_dir = True
 
-        self.log.debug("S3contents.S3FS: `%s` is a directory: %s", path_, is_dir)
+        self.log.debug(
+            "S3contents.S3FS: `%s` is a directory: %s", path_, is_dir)
         return is_dir
 
     def mv(self, old_path, new_path):
-        self.log.debug("S3contents.S3FS: Move file `%s` to `%s`", old_path, new_path)
+        self.log.debug("S3contents.S3FS: Move file `%s` to `%s`",
+                       old_path, new_path)
         self.cp(old_path, new_path)
         self.rm(old_path)
 
     def cp(self, old_path, new_path):
         old_path_, new_path_ = self.path(old_path), self.path(new_path)
-        self.log.debug("S3contents.S3FS: Coping `%s` to `%s`", old_path_, new_path_)
+        self.log.debug("S3contents.S3FS: Coping `%s` to `%s`",
+                       old_path_, new_path_)
 
         if self.isdir(old_path):
             old_dir_path, new_dir_path = old_path, new_path
             for obj in self.ls(old_dir_path):
                 old_item_path = obj
-                new_item_path = old_item_path.replace(old_dir_path, new_dir_path, 1)
+                new_item_path = old_item_path.replace(
+                    old_dir_path, new_dir_path, 1)
                 self.cp(old_item_path, new_item_path)
         elif self.isfile(old_path):
             self.fs.copy(old_path_, new_path_)
@@ -151,7 +160,7 @@ class S3FS(GenericFS):
     def mkdir(self, path):
         path_ = self.path(path, self.dir_keep_file)
         self.log.debug("S3contents.S3FS: Making dir: `%s`", path_)
-        self.fs.touch(path_,acl='private')
+        self.fs.touch(path_, acl='private')
 
     def read(self, path):
         path_ = self.path(path)
@@ -187,12 +196,12 @@ class S3FS(GenericFS):
                 400, u'Encoding error saving %s: %s' % (path_, e)
             )
         with self.fs.open(path_, mode='wb', acl='private') as f:
-            f.write(content_,acl='private')
+            f.write(content_, acl='private')
 
     def writenotebook(self, path, content):
         path_ = self.path(self.unprefix(path))
         self.log.debug("S3contents.S3FS: Writing notebook: `%s`", path_)
-        with self.fs.open(path_, mode='wb', acl = 'private') as f:
+        with self.fs.open(path_, mode='wb', acl='private') as f:
             f.write(content.encode("utf-8"))
 
     #  Utilities -------------------------------------------------------------------------------------------------------
@@ -208,11 +217,13 @@ class S3FS(GenericFS):
     def unprefix(self, path):
         """Remove the self.prefix_ (if present) from a path or list of paths"""
         if isinstance(path, six.string_types):
-            path = path[len(self.prefix_):] if path.startswith(self.prefix_) else path
+            path = path[len(self.prefix_):] if path.startswith(
+                self.prefix_) else path
             path = path[1:] if path.startswith(self.delimiter) else path
             return path
         if isinstance(path, (list, tuple)):
-            path = [p[len(self.prefix_):] if p.startswith(self.prefix_) else p for p in path]
+            path = [p[len(self.prefix_):] if p.startswith(
+                self.prefix_) else p for p in path]
             path = [p[1:] if p.startswith(self.delimiter) else p for p in path]
             return path
 
