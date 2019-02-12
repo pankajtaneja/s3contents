@@ -85,7 +85,6 @@ class S3FS(GenericFS):
     def ls(self, path=""):
         path_ = self.path(path)
         self.log.debug("S3contents.S3FS: Listing directory: `%s`", path_)
-        self.log.debug("S3contents.S3FS: creating file system object")
         files = self.fs.ls(path_, refresh=True)
         return self.unprefix(files)
 
@@ -111,6 +110,9 @@ class S3FS(GenericFS):
         path_ = self.path(path)
         is_dir = False
 
+        connection_refresh = self.fs.connect(self, refresh=True)
+        if connection_refresh:
+            self.log.debug("connection refresh done")
         exists = self.fs.exists(path_)
         if not exists:
             is_dir = False
