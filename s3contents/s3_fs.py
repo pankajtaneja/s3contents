@@ -110,9 +110,8 @@ class S3FS(GenericFS):
         path_ = self.path(path)
         is_dir = False
 
-        connection_refresh = self.fs.connect(self, refresh=True)
-        if connection_refresh:
-            self.log.debug("connection refresh done")
+        self.fs.connect(True)
+        self.log.debug("connection refresh done")
         exists = self.fs.exists(path_)
         if not exists:
             is_dir = False
