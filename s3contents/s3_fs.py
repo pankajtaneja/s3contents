@@ -85,6 +85,7 @@ class S3FS(GenericFS):
     def ls(self, path=""):
         path_ = self.path(path)
         self.log.debug("S3contents.S3FS: Listing directory: `%s`", path_)
+        self.log.debug("S3contents.S3FS: creating file system object")
         files = self.fs.ls(path_, refresh=True)
         return self.unprefix(files)
 
