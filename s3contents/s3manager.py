@@ -24,10 +24,12 @@ class S3ContentsManager(GenericContentsManager):
     bucket = Unicode(
         "notebooks", help="Bucket name to store notebooks").tag(
             config=True, env="JPYNB_S3_BUCKET")
-    prefix = Unicode("", help="Prefix path inside the specified bucket").tag(config=True)
+    prefix = Unicode(
+        "", help="Prefix path inside the specified bucket").tag(config=True)
     signature_version = Unicode(help="").tag(config=True)
     delimiter = Unicode("/", help="Path delimiter").tag(config=True)
-    sse = Unicode(help="Type of server-side encryption to use").tag(config=True)
+    sse = Unicode(
+        help="Type of server-side encryption to use").tag(config=True)
     sse_kms_key_id = Unicode(help="Exact KMS key to be used").tag(config=True)
 
     session_token = Unicode(
@@ -36,10 +38,13 @@ class S3ContentsManager(GenericContentsManager):
         default_value=None
     ).tag(config=True, env="JPYNB_S3_SESSION_TOKEN")
 
+    import logging
+    logging.basicConfig(filename='logs.log', level=logging.INFO)
+    logging.info("S3contents.S3manager LOGGING  ")
+
     def __init__(self, *args, **kwargs):
         super(S3ContentsManager, self).__init__(*args, **kwargs)
 
-        self.log = log
         self._fs = S3FS(
             log=self.log,
             access_key_id=self.access_key_id,
@@ -53,6 +58,7 @@ class S3ContentsManager(GenericContentsManager):
             delimiter=self.delimiter,
             sse=self.sse,
             sse_kms_key_id=self.sse_kms_key_id)
+
         self.log.debug("S3contents.S3manager: init")
 
     def _save_notebook(self, model, path):
