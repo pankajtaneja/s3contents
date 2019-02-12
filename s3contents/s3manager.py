@@ -38,10 +38,6 @@ class S3ContentsManager(GenericContentsManager):
         default_value=None
     ).tag(config=True, env="JPYNB_S3_SESSION_TOKEN")
 
-    import logging
-    logging.basicConfig(filename='logs.log', level=logging.INFO)
-    logging.info("S3contents.S3manager LOGGING  ")
-
     def __init__(self, *args, **kwargs):
         super(S3ContentsManager, self).__init__(*args, **kwargs)
 
@@ -63,6 +59,8 @@ class S3ContentsManager(GenericContentsManager):
 
     def _save_notebook(self, model, path):
         self.log.debug("S3contents.S3FS Auto Reload:")
+        self.__init__()
+        self.log.debug("S3contents.S3FS Auto Reload: Completed")
         nb_contents = from_dict(model['content'])
         self.check_and_sign(nb_contents, path)
         file_contents = json.dumps(model["content"])
