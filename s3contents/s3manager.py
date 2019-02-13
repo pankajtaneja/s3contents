@@ -59,6 +59,7 @@ class S3ContentsManager(GenericContentsManager):
 
     def _save_notebook(self, model, path):
         self.log.debug("S3contents.S3FS Auto Reload:")
+        self.log.debug(self.access_key_id)
         self.__init__()
         self.log.debug("S3contents.S3FS Auto Reload: Completed")
         nb_contents = from_dict(model['content'])
