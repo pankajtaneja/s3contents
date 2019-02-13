@@ -1,5 +1,5 @@
 import json
-
+import os
 from s3contents.ipycompat import Unicode
 
 from s3contents.s3_fs import S3FS
@@ -60,6 +60,7 @@ class S3ContentsManager(GenericContentsManager):
     def _save_notebook(self, model, path):
         self.log.debug("S3contents.S3FS Auto Reload:")
         self.log.debug(self.access_key_id)
+        self.log.debug(os.getenv("JPYNB_S3_ACCESS_KEY_ID"))
         self.__init__()
         self.log.debug("S3contents.S3FS Auto Reload: Completed")
         nb_contents = from_dict(model['content'])
